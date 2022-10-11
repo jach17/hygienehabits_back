@@ -38,5 +38,6 @@ export const insertPlayer = async(req, res)=>{
             authTokenTutor] );
     res.json({"row affected id": rows.insertId});
     */
+   console.log("Post wrks");
    res.json({"res":"ok"});
 }
