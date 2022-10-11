@@ -22,7 +22,7 @@ export const insertTutor = async(req, res)=>{
 
 
 export const insertPlayer = async(req, res)=>{
-    const {
+   /* const {
         namePlayer ,  
         passwordPlayer ,  
         agePlayer ,  
@@ -37,4 +37,6 @@ export const insertPlayer = async(req, res)=>{
             idTutorOwner , 
             authTokenTutor] );
     res.json({"row affected id": rows.insertId});
+    */
+   res.json({"res":"ok"});
 }
