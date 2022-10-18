@@ -10,7 +10,7 @@ export const testGetRoute = async(req, res)=>{
             console.log("db connection and routes con get");
             res.send(result);
         }catch(error){
-            return res.status(500).json({
+            return res.json({
                 message:'Algo salió mal xd',
                 er:error
 
