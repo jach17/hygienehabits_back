@@ -11,7 +11,9 @@ export const testGetRoute = async(req, res)=>{
             res.send(result);
         }catch(error){
             return res.status(500).json({
-                message:'Algo salió mal xd'
+                message:'Algo salió mal xd',
+                er:error
+
             });
         }
     }
