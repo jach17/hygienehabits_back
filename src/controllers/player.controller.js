@@ -15,14 +15,24 @@ export const testGetRoute = async(req, res)=>{
                 er:error
 
             });
+
         }
     }
 
 export const testPostRoute = async(req, res)=>{
-    const {namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor} = req.body
+    try{
+        const {namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor} = req.body
     const [row] = await pool.query('INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)', [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
     console.log("db connection and routes con post");
     res.json({'Inserted id':row.insertId});
+    }catch(error){
+return res.json({
+                message:'Algo salió mal xd',
+                er:error
+
+            });
+            
+    }
 }
 
 export const testGetRouteParams = async(req, res)=>{
