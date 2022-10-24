@@ -4,6 +4,12 @@ import { pool } from "../db.js";
  * 
  * 
  */
+
+export const testNoDBRoute =(req, res)=>{
+    res.send("GET WITHOUT DB IS WORKING");
+}
+
+
 export const testGetRoute = async(req, res)=>{
         try{
             const [result] = await pool.query('SELECT * FROM tb_player');
