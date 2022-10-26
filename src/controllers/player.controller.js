@@ -1,20 +1,63 @@
 import { pool } from "../db.js";
 /*****
- * Rutas de prueba de coneccion y manipulacion con las bases de datos
+ * Rutas de prueba de conexion y manipulacion con las bases de datos
  * 
  * 
  */
 
 export const testNoDBRoute =(req, res)=>{
-    res.send("GET WITHOUT DB IS WORKING");
+    try{
+        throw "Error de prueba bro xd";
+        res.status(200).json(
+            {
+                "result":"1",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Server is running": "true",
+                        },
+                    ]
+                },
+                "code":"200"
+            }
+        );
+    }catch(e){
+        res.status(500).json(
+            {
+                "result":"0",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Error": e,
+                        },
+                    ]
+                },
+                "code":"500"
+            }
+        );
+    }
 }
 
 
 export const testGetRoute = async(req, res)=>{
         try{
             const [result] = await pool.query('SELECT * FROM tb_player');
-            console.log("db connection and routes con get");
-            res.send(result);
+            
+            res.status(200).json(
+                {
+                    "result":"1",
+                    "message":
+                    {
+                        "response":result
+                    },
+                    "code":"200"
+                }
+            );
+            
+
+            
         }catch(error){
             return res.json({
                 message:'Algo salió mal xd',
