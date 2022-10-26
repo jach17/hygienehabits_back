@@ -2,7 +2,31 @@ import { pool } from "../db.js";
 
 /**  Routes for player services */
 
-
+export const authPlayer = async (req, res)=>{
+    const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
+    const {namePlayer, passwordPlayer} = req.body;
+    const [row] = await pool.query(query, [namePlayer, passwordPlayer]);
+    let isRegistred=false;
+    if(row.length>0){
+        isRegistred=true;
+    }else{
+        isRegistred=false;
+    }
+    res.status(200).json(
+        {
+            "result":"1",
+            "message":
+            {
+                "response":[
+                    {
+                        "isRegistred":isRegistred
+                    }
+                ]
+            },
+            "code":"200"
+        }
+    );
+}
 
 export const getPlayerById = async(req,res)=>{
     try{
