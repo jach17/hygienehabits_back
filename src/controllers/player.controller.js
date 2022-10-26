@@ -3,29 +3,46 @@ import { pool } from "../db.js";
 /**  Routes for player services */
 
 export const authPlayer = async (req, res)=>{
-    const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
-    const {namePlayer, passwordPlayer} = req.body;
-    const [row] = await pool.query(query, [namePlayer, passwordPlayer]);
-    let isRegistred=false;
-    if(row.length>0){
-        isRegistred=true;
-    }else{
-        isRegistred=false;
-    }
-    res.status(200).json(
-        {
-            "result":"1",
-            "message":
-            {
-                "response":[
-                    {
-                        "isRegistred":isRegistred
-                    }
-                ]
-            },
-            "code":"200"
+    try{
+        const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
+        const {namePlayer, passwordPlayer} = req.body;
+        const [row] = await pool.query(query, [namePlayer, passwordPlayer]);
+        let isRegistred=false;
+        if(row.length>0){
+            isRegistred=true;
+        }else{
+            isRegistred=false;
         }
-    );
+        res.status(200).json(
+            {
+                "result":"1",
+                "message":
+                {
+                    "response":[
+                        {
+                            "isRegistred":isRegistred
+                        }
+                    ]
+                },
+                "code":"200"
+            }
+        );
+    }catch(e){
+        res.status(500).json(
+            {
+                "result":"0",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Error": e,
+                        },
+                    ]
+                },
+                "code":"500"
+            }
+        );
+    }
 }
 
 export const getPlayerById = async(req,res)=>{
@@ -63,9 +80,6 @@ export const getPlayerById = async(req,res)=>{
         );
     }
 }
-
-
-
 
 export const postPlayer = async(req, res)=>{
     try{
@@ -142,7 +156,6 @@ export const postPlayer = async(req, res)=>{
         );  
     }
 }
-
 
 export const getPlayers = async(req, res)=>{
     try{
