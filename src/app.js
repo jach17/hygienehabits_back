@@ -1,4 +1,5 @@
 import express from 'express';
+import playerRouter from './routes/player.routes.js';
 import testRouter from './routes/test.routes.js'
 import tutorRouter from './routes/tutor.routes.js';
 
@@ -10,6 +11,8 @@ app.use(express.json());
 app.use(`${api}/test`,testRouter);
 /*** TUTOR ROUTES ***/
 app.use(api, tutorRouter);
+/*** PLAYER ROUTES ***/
+app.use(api, playerRouter);
 
 app.use((req, res, next)=>{
     res.status(404).json(
