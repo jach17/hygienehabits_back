@@ -1,14 +1,11 @@
 import { Router } from "express";
-import { testGetRoute, testGetRouteParams, testNoDBRoute, testPostRoute } from "../controllers/player.controller.js";
+import {getPlayerById, getPlayers, postPlayer} from "../controllers/player.controller.js";
 
-const router = Router();
+const playerRouter = Router();
 
-//Rutas para probar coneccion de base de datos
-router.get('/testsindb', testNoDBRoute);
-router.get('/ping', testGetRoute);
-router.get('/ping/:id', testGetRouteParams);
-router.post('/ping', testPostRoute);
+playerRouter.get('/list/players', getPlayers);
+playerRouter.get('/list/player/:id', getPlayerById);
+playerRouter.post('/add/player', postPlayer);
 
 
-
-export default router;
+export default playerRouter;
