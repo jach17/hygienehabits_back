@@ -1,5 +1,4 @@
 export const isJSONempty = (json) => {
-    console.log(json);
     if(json.length==0){
         return true;
     }else{

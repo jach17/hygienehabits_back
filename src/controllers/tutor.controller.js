@@ -3,9 +3,13 @@ import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_
 /** Routes for tutor services */
 
 
+/*
+const idTutor = dbResponse[0].idTutor; linea pa sacar el id jeje
+        
+*/
+
 
 export const authTutor = async(req,res)=>{
-    
     try{
         const query = "SELECT * FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
         const {nameTutor, passwordTutor} = req.body;
@@ -14,7 +18,11 @@ export const authTutor = async(req,res)=>{
         res.status(200).json(
             jsonResponse(
                 RESULT_CODE_SUCCESS,
-                [{"isRegistred":isRegistred}],
+                [
+                    {
+                        "isRegistred":isRegistred
+                    }
+                ],
                 STATUS_CODE_SUCCESS
             )
         );
