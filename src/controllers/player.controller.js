@@ -39,35 +39,36 @@ export const testNoDBRoute =(req, res)=>{
 
 
 export const testGetRoute = async(req, res)=>{
-        try{
-            const [result] = await pool.query('SELECT * FROM tb_player');
-            res.status(200).json(
+    try{
+        const query = 'SELECT * FROM tb_player';
+        const [result] = await pool.query(query);
+        res.status(200).json(
+            {
+                "result":"1",
+                "message":
                 {
-                    "result":"1",
-                    "message":
-                    {
-                        "response":result
-                    },
-                    "code":"200"
-                }
-            );
-        }catch(e){
-            return res.status(500).json(
+                    "response":result
+                },
+                "code":"200"
+            }
+        );
+    }catch(e){
+        return res.status(500).json(
+            {
+                "result":"0",
+                "message":
                 {
-                    "result":"0",
-                    "message":
-                    {
-                        "response":[
-                            {
-                                "Error": e,
-                            },
-                        ]
-                    },
-                    "code":"500"
-                }
-            );
-        }
+                    "response":[
+                        {
+                            "Error": e,
+                        },
+                    ]
+                },
+                "code":"500"
+            }
+        );
     }
+}
 
 export const testPostRoute = async(req, res)=>{
     try{
