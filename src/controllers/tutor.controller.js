@@ -1,53 +1,29 @@
 import { pool } from "../db.js";
+import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
 /** Routes for tutor services */
 
-const isJSONempty = (json) => {
-    if(json.length==0){
-        return true;
-    }else{
-        return false;
-    }
-}
+
 
 export const authTutor = async(req,res)=>{
     try{
         const query = "SELECT * FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
         const {nameTutor, passwordTutor} = req.body;
         const [dbResponse] = await pool.query(query, [nameTutor, passwordTutor]);
-        let sePuedeRegistrar = false;
-        if(isJSONempty(dbResponse)){
-            sePuedeRegistrar = true;
-        }else{
-            sePuedeRegistrar=false;
-        }
+        const isRegistred = !isJSONempty(dbResponse);
         res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":[
-                        {
-                            "isRegistred":sePuedeRegistrar
-                        }
-                    ]
-                },
-                "code":"200"
-            }
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                [{"isRegistred":isRegistred}],
+                STATUS_CODE_SUCCESS
+            )
         );
     }catch(e){
         res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );
     }
 }
@@ -61,29 +37,19 @@ export const getTutorById = async(req, res)=>{
             result= [{"Error":"El id solicitado no se encuentra registrado"}];
         }
         res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":result
-                },
-                "code":"200"
-            }
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
         );
     }catch(e){
         return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );
     }
 }
@@ -97,29 +63,19 @@ export const getTutors = async(req, res)=>{
             result=[{"Error":"No hay tutores registrados"}];
         }
         res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":result
-                },
-                "code":"200"
-            }
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
         );
     }catch(e){
         return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );
     }
 };
@@ -140,29 +96,19 @@ export const postTutor = async(req, res)=>{
             
         }
         res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":response
-                },
-                "code":"200"
-            }
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                response,
+                STATUS_CODE_SUCCESS
+            )
         );
     }catch(e){
         return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );  
     }
 
