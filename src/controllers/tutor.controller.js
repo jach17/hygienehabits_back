@@ -1,7 +1,5 @@
 import { pool } from "../db.js";
-/****
- * Rutas para servicios relacionados al control de la tabla de tutor
- */
+/** Routes for tutor services */
 
 export const getTutorById = async(req, res)=>{
     try{
