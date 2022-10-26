@@ -1,15 +1,13 @@
 import express from 'express';
-import playerRoutes from './routes/player.routes.js'
+import testRouter from './routes/test.routes.js'
 import tutorRouter from './routes/tutor.routes.js';
 
 
 const api = '/api/hygienehabits';
 const app = express();
 app.use(express.json());
-/*****
- * Test api url and db connection
- */
-app.use(`${api}/test/dbconnection`,playerRoutes);
+/*** TEST ROUTES api url and db connection  ***/
+app.use(`${api}/test`,testRouter);
 /*** TUTOR ROUTES ***/
 app.use(api, tutorRouter);
 

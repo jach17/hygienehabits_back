@@ -1,16 +1,49 @@
 import { pool } from "../db.js";
-/****
- * Rutas para servicios relacionados al control de la tabla de tutor
+/**
+ * Rutas de prueba de conexion y manipulacion con las bases de datos
  */
 
-export const getTutorById = async(req, res)=>{
+export const testNoDBRoute =(req, res)=>{
     try{
-        const idToFind = req.params.id
-        const query='SELECT * FROM tb_tutor WHERE idTutor=?';
-        let [result] = await pool.query(query, idToFind);
-        if(result.length==0){
-            result= [{"Error":"El id solicitado no se encuentra registrado"}];
-        }
+        res.status(200).json(
+            {
+                "result":"1",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Server is running": "true",
+                        },
+                    ]
+                },
+                "code":"200"
+            }
+        );
+    }catch(e){
+        return res.status(500).json(
+            {
+                "result":"0",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Server is running": "false",
+                        },
+                        {
+                            "Error": e,
+                        },
+                    ]
+                },
+                "code":"500"
+            }
+        );
+    }
+}
+
+export const testGetRoute = async(req, res)=>{
+    try{
+        const query = 'SELECT * FROM tb_player';
+        const [result] = await pool.query(query);
         res.status(200).json(
             {
                 "result":"1",
@@ -39,44 +72,11 @@ export const getTutorById = async(req, res)=>{
     }
 }
 
-
-export const getTutors = async(req, res)=>{
+export const testPostRoute = async(req, res)=>{
     try{
-        const query = 'SELECT * FROM tb_tutor';
-        const [result] = await pool.query(query);
-        res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":result
-                },
-                "code":"200"
-            }
-        );
-    }catch(e){
-        return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
-        );
-    }
-};
-
-export const postTutor = async(req, res)=>{
-    try{
-        const {nameTutor,passwordTutor,ageTutor,authTokenTutor} = req.body
-        const query='INSERT INTO tb_tutor (nameTutor,passwordTutor,ageTutor,authTokenTutor) VALUES (?,?,?,?)';
-        const [row] = await pool.query(query, [nameTutor,passwordTutor,ageTutor,authTokenTutor]);
+        const {namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor} = req.body
+        const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)';
+        const [row] = await pool.query(query, [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
         res.status(200).json(
             {
                 "result":"1",
@@ -106,6 +106,42 @@ export const postTutor = async(req, res)=>{
                 "code":"500"
             }
         );  
+    }
+}
+
+export const testGetRouteParams = async(req, res)=>{
+    try{
+        const idToFind = req.params.id
+        const query='SELECT * FROM tb_player WHERE idPlayer=?';
+        let [result] = await pool.query(query, idToFind);
+        if(result.length==0){
+            result= [{"Error":"El id solicitado no se encuentra registrado"}];
+        }
+        res.status(200).json(
+            {
+                "result":"1",
+                "message":
+                {
+                    "response":result
+                },
+                "code":"200"
+            }
+        );
+    }catch(e){
+        return res.status(500).json(
+            {
+                "result":"0",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Error": e,
+                        },
+                    ]
+                },
+                "code":"500"
+            }
+        );
     }
 
 }
