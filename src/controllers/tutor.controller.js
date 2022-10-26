@@ -5,6 +5,7 @@ import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_
 
 
 export const authTutor = async(req,res)=>{
+    
     try{
         const query = "SELECT * FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
         const {nameTutor, passwordTutor} = req.body;
@@ -26,6 +27,7 @@ export const authTutor = async(req,res)=>{
             )
         );
     }
+    
 }
 
 export const getTutorById = async(req, res)=>{
