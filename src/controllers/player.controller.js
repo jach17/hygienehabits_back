@@ -1,31 +1,35 @@
 import { pool } from "../db.js";
+import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
+
 
 /**  Routes for player services */
 
 export const authPlayer = async (req, res)=>{
-    const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
-    const {namePlayer, passwordPlayer} = req.body;
-    const [row] = await pool.query(query, [namePlayer, passwordPlayer]);
-    let isRegistred=false;
-    if(row.length>0){
-        isRegistred=true;
-    }else{
-        isRegistred=false;
-    }
-    res.status(200).json(
-        {
-            "result":"1",
-            "message":
-            {
-                "response":[
+    try{
+        const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
+        const {namePlayer, passwordPlayer} = req.body;
+        const [dbResponse] = await pool.query(query, [namePlayer, passwordPlayer]);
+        const isRegistred=!isJSONempty(dbResponse);
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                [
                     {
                         "isRegistred":isRegistred
                     }
-                ]
-            },
-            "code":"200"
-        }
-    );
+                ],
+                STATUS_CODE_SUCCESS
+            )
+        );
+    }catch(e){
+        res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );
+    }
 }
 
 export const getPlayerById = async(req,res)=>{
@@ -33,148 +37,85 @@ export const getPlayerById = async(req,res)=>{
         const idToFind = req.params.id
         const query='SELECT * FROM tb_player WHERE idPlayer=?';
         let [result] = await pool.query(query, idToFind);
-        if(result.length==0){
+        if(isJSONempty(result)){
             result= [{"Error":"El id solicitado no se encuentra registrado"}];
         }
         res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":result
-                },
-                "code":"200"
-            }
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
         );
     }catch(e){
         return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );
     }
 }
-
-
-
 
 export const postPlayer = async(req, res)=>{
     try{
         const {namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor} = req.body
         const authTokenTutorWithIdTutor = "SELECT * FROM tb_tutor WHERE idTutor=? AND authTokenTutor=?";
-        const [r] = await pool.query(authTokenTutorWithIdTutor, [idTutorOwner, authTokenTutor]);
-        if(r.length>0){
-            const query='SELECT * FROM tb_player WHERE namePlayer = ?';
-            const [result] = await pool.query(query, namePlayer);
-            if(result.length==0){
-                    const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)';
-                    const [row] = await pool.query(query, [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
-                    res.status(200).json(
-                        {
-                            "result":"1",
-                            "message":
-                            {
-                                "response":[
-                                    {
-                                        "insertedId":row.insertId
-                                    }
-                                ]
-                            },
-                            "code":"200"
-                        }
-                    );
-                    
+        const [authTokenTutorWithIdResult] = await pool.query(authTokenTutorWithIdTutor, [idTutorOwner, authTokenTutor]);
+        let response =[];
+        if(!isJSONempty(authTokenTutorWithIdResult)){
+            const yaRegistrado='SELECT * FROM tb_player WHERE namePlayer = ?';
+            const [result] = await pool.query(yaRegistrado, namePlayer);
+            if(isJSONempty(result)){
+                const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)';
+                const [row] = await pool.query(query, [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
+                response = [{"insertedId":row.insertId}];
             }else{
-                res.status(200).json(
-                    {
-                        "result":"1",
-                        "message":
-                        {
-                            "response":[
-                                {
-                                    "Error":"Ese nombre ya se encuentra registrado"
-                                }
-                            ]
-                        },
-                        "code":"200"
-                    }
-                );
+                response = [{"Error":"Ese nombre ya se encuentra registrado"}];
             }
         }else{
-            res.status(200).json(
-                {
-                    "result":"1",
-                    "message":
-                    {
-                        "response":[
-                            {
-                                "Error":"Ocurrió un error al verificar la información del tutor"
-                            }
-                        ]
-                    },
-                    "code":"200"
-                }
-            );
+            response = [{"Error":"Ocurrió un error al verificar la información del tutor"}];
         }
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                response,
+                STATUS_CODE_SUCCESS
+            )
+        );
     }catch(e){
         return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );  
     }
 }
-
 
 export const getPlayers = async(req, res)=>{
     try{
         const query = 'SELECT * FROM tb_player';
         let [result] = await pool.query(query);
-        if(result.length==0){
+        if(isJSONempty(result)){
             result = [{"Error":"No hay jugadores registrados"}];
         }
         res.status(200).json(
-            {
-                "result":"1",
-                "message":
-                {
-                    "response":result
-                },
-                "code":"200"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );
     }catch(e){
         return res.status(500).json(
-            {
-                "result":"0",
-                "message":
-                {
-                    "response":[
-                        {
-                            "Error": e,
-                        },
-                    ]
-                },
-                "code":"500"
-            }
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
         );
     }
 };
