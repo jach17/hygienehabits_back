@@ -83,7 +83,6 @@ export const getTutorById = async(req, res)=>{
     }
 }
 
-
 export const getTutors = async(req, res)=>{
     try{
         const query = 'SELECT * FROM tb_tutor';
