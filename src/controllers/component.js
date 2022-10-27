@@ -8,7 +8,7 @@ export const isJSONempty = (json) => {
 
 export const jsonResponse = (result_code, jsonObjResponse, status_code) =>{
     let response = []
-    if(result_code==0){
+    if(result_code==RESULT_CODE_ERROR){
         response = [{"Error":jsonObjResponse}];
     }else{
         response=jsonObjResponse;

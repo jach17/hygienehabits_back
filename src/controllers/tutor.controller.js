@@ -2,12 +2,31 @@ import { pool } from "../db.js";
 import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
 /** Routes for tutor services */
 
-
-/*
-const idTutor = dbResponse[0].idTutor; linea pa sacar el id jeje
-        
-*/
-
+export const getTutorIdByNameAndPassword = async(req, res)=>{
+    try{
+        const query = "SELECT idTutor FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
+        const {nameTutor, passwordTutor} = req.body;
+        let [result] = await pool.query(query, [nameTutor, passwordTutor]);
+        if(isJSONempty(result)){
+            result= [{"Error":"El id solicitado no se encuentra registrado"}];
+        }
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
+        );
+    }catch(e){
+        res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );
+    }
+}
 
 export const authTutor = async(req,res)=>{
     try{
