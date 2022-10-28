@@ -70,12 +70,12 @@ export const postPlayer = async(req, res)=>{
             if(isJSONempty(result)){
                 const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)';
                 const [row] = await pool.query(query, [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
-                response = [{"insertedId":row.insertId}];
+                response = [{"inserted":"true","insertedId":row.insertId}];
             }else{
-                response = [{"Error":"Ese nombre ya se encuentra registrado"}];
+                response = [{"inserted":"false","Error":"Ese nombre ya se encuentra registrado"}];
             }
         }else{
-            response = [{"Error":"Ocurrió un error al verificar la información del tutor"}];
+            response = [{"inserted":"true","Error":"Ocurrió un error al verificar la información del tutor"}];
         }
         res.status(200).json(
             jsonResponse(
@@ -100,13 +100,14 @@ export const getPlayers = async(req, res)=>{
         const query = 'SELECT * FROM tb_player';
         let [result] = await pool.query(query);
         if(isJSONempty(result)){
+            console.log("Json empty")
             result = [{"Error":"No hay jugadores registrados"}];
         }
         res.status(200).json(
             jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
             )
         );
     }catch(e){
@@ -118,4 +119,4 @@ export const getPlayers = async(req, res)=>{
             )
         );
     }
-};
+}
