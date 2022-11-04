@@ -10,12 +10,14 @@ export const authPlayer = async (req, res)=>{
         const {namePlayer, passwordPlayer} = req.body;
         const [dbResponse] = await pool.query(query, [namePlayer, passwordPlayer]);
         const isRegistred=!isJSONempty(dbResponse);
+        const idPlayer = dbResponse[0].idPlayer;
         res.status(200).json(
             jsonResponse(
                 RESULT_CODE_SUCCESS,
                 [
                     {
-                        "isRegistred":isRegistred
+                        "isRegistred":isRegistred,
+                        "idPlayer":idPlayer
                     }
                 ],
                 STATUS_CODE_SUCCESS
