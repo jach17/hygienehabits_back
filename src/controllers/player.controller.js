@@ -100,7 +100,6 @@ export const getPlayers = async(req, res)=>{
         const query = 'SELECT * FROM tb_player';
         let [result] = await pool.query(query);
         if(isJSONempty(result)){
-            console.log("Json empty")
             result = [{"Error":"No hay jugadores registrados"}];
         }
         res.status(200).json(
