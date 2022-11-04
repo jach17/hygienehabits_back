@@ -2,24 +2,18 @@ import { pool } from "../db.js";
 import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
 
 /* RUTAS PARA LOS REPORTES */
-export const postReports = async(req, res)=>{
+export const postReport = async(req, res)=>{
     try{
         const {dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed} = req.body
-        const authTokenTutorWithIdTutor = "SELECT * FROM tb_tutor WHERE idTutor=? AND authTokenTutor=?";
-        const [authTokenTutorWithIdResult] = await pool.query(authTokenTutorWithIdTutor, [idTutorOwner, authTokenTutor]);
         let response =[];
-        if(!isJSONempty(authTokenTutorWithIdResult)){
-            const yaRegistrado='SELECT * FROM tb_player WHERE namePlayer = ?';
-            const [result] = await pool.query(yaRegistrado, namePlayer);
-            if(isJSONempty(result)){
-                const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)';
-                const [row] = await pool.query(query, [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
-                response = [{"inserted":"true","insertedId":row.insertId}];
-            }else{
-                response = [{"inserted":"false","Error":"Ese nombre ya se encuentra registrado"}];
-            }
+        const yaRegistrado='SELECT * FROM tb_sesion WHERE idSesion = ?';
+        const [result] = await pool.query(yaRegistrado, idSesionOwner);
+        if(!isJSONempty(result)){
+            const query='INSERT INTO tb_report (dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed) VALUES (?,?,?,?,?)';
+            const [row] = await pool.query(query, [dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed]);
+            response = [{"report created":"true","insertedId":row.insertId}];
         }else{
-            response = [{"inserted":"true","Error":"Ocurrió un error al verificar la información del tutor"}];
+            response = [{"report created":"false","Error":"La información de la sesión es incorrecta"}];
         }
         res.status(200).json(
             jsonResponse(
