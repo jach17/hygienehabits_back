@@ -2,6 +2,7 @@ import express from 'express';
 import levelRouter from './routes/level.routes.js';
 import playerRouter from './routes/player.routes.js';
 import reportRouter from './routes/report.routes.js';
+import sesionRouter from './routes/sesion.routes.js';
 import testRouter from './routes/test.routes.js'
 import tutorRouter from './routes/tutor.routes.js';
 
@@ -19,6 +20,9 @@ app.use(api, playerRouter);
 app.use(api, reportRouter);
 /*** LEVEL ROUTES ***/
 app.use(api, levelRouter);
+/*** SESION ROUTES ***/
+app.use(api, sesionRouter);
+
 
 
 app.use((req, res, next)=>{
