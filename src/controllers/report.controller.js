@@ -1,66 +1,10 @@
 import { pool } from "../db.js";
 import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
 
-
-/**  Routes for player services */
-
-export const authPlayer = async (req, res)=>{
+/* RUTAS PARA LOS REPORTES */
+export const postReports = async(req, res)=>{
     try{
-        const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
-        const {namePlayer, passwordPlayer} = req.body;
-        const [dbResponse] = await pool.query(query, [namePlayer, passwordPlayer]);
-        const isRegistred=!isJSONempty(dbResponse);
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                [
-                    {
-                        "isRegistred":isRegistred
-                    }
-                ],
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );
-    }
-}
-
-export const getPlayerById = async(req,res)=>{
-    try{
-        const idToFind = req.params.id
-        const query='SELECT * FROM tb_player WHERE idPlayer=?';
-        let [result] = await pool.query(query, idToFind);
-        if(isJSONempty(result)){
-            result= [{"Error":"El id solicitado no se encuentra registrado"}];
-        }
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                result,
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        return res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );
-    }
-}
-
-export const postPlayer = async(req, res)=>{
-    try{
-        const {namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor} = req.body
+        const {dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed} = req.body
         const authTokenTutorWithIdTutor = "SELECT * FROM tb_tutor WHERE idTutor=? AND authTokenTutor=?";
         const [authTokenTutorWithIdResult] = await pool.query(authTokenTutorWithIdTutor, [idTutorOwner, authTokenTutor]);
         let response =[];
@@ -95,12 +39,14 @@ export const postPlayer = async(req, res)=>{
     }
 }
 
-export const getPlayers = async(req, res)=>{
+
+
+export const getReports = async(req, res)=>{
     try{
-        const query = 'SELECT * FROM tb_player';
+        const query = 'SELECT * FROM tb_report';
         let [result] = await pool.query(query);
         if(isJSONempty(result)){
-            result = [{"Error":"No hay jugadores registrados"}];
+            result = [{"Error":"No hay reportes registrados"}];
         }
         res.status(200).json(
             jsonResponse(
