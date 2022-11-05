@@ -25,7 +25,34 @@ export const getSesions = async(req, res)=>{
         );
     }
 }
+export const updateSesionDateEndById = async(req, res)=>{
+    try{
+        const idToUpdate = req.params.id
+        const {dateEnd} = req.body
+        let response =[];
+        const query=`UPDATE tb_sesion SET dateEnd=?  WHERE idSesion=${idToUpdate}`;
+        const [row] = await pool.query(query,dateEnd);
+        console.log(row);
+        response = [{"sesion updated":"true","id affected":idToUpdate}];
+    
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                response,
+                STATUS_CODE_SUCCESS
+            )
+        );
 
+    }catch(e){
+        return res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );  
+    }
+}
 export const postSesion = async(req, res)=>{
     try{
         const {dateStart, dateEnd, idPlayerOwner} = req.body
