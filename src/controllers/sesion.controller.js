@@ -1,6 +1,32 @@
 import { pool } from "../db.js";
 import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
 
+export const getSesionsByPlayerId = async(req,res)=>{
+    try{
+        const idPlayerOwner = req.params.id
+        const superquery = 'SELECT * FROM tb_sesion WHERE tb_sesion.idPlayerOwner=?'
+        let [result] = await pool.query(superquery, idPlayerOwner);
+        if(isJSONempty(result)){
+            result = [{"Error":"No hay sesiones registradas"}];
+        }
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
+        );
+    }catch(e){
+        return res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );
+    }
+}
+
 export const getSesions = async(req, res)=>{
     try{
         const query = 'SELECT * FROM tb_sesion';

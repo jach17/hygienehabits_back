@@ -1,7 +1,38 @@
 import { pool } from "../db.js";
 import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
 
+
+
 /* RUTAS PARA LOS REPORTES */
+
+export const getReportsByPlayerId = async(req,res)=>{
+    try{
+        const idPlayerOwner = req.params.id
+        const superquery = 'SELECT * FROM tb_player JOIN (SELECT * FROM tb_sesion JOIN tb_report WHERE tb_report.idSesionOwner=tb_sesion.idSesion) as RES WHERE tb_player.idPlayer=RES.idPlayerOwner and tb_player.idPlayer=?'
+        //const query = 'SELECT * FROM tb_report WHERE ';
+        let [result] = await pool.query(superquery, idPlayerOwner);
+        if(isJSONempty(result)){
+            result = [{"Error":"No hay reportes registrados"}];
+        }
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
+        );
+    }catch(e){
+        return res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );  
+    }
+}
+
+
 export const postReport = async(req, res)=>{
     try{
         const {dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed} = req.body
