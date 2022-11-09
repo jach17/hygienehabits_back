@@ -58,9 +58,13 @@ export const updateSesionDateEndById = async(req, res)=>{
         let response =[];
         const query=`UPDATE tb_sesion SET dateEnd=?  WHERE idSesion=${idToUpdate}`;
         const [row] = await pool.query(query,dateEnd);
-        console.log(row);
-        response = [{"sesion updated":"true","id affected":idToUpdate}];
-    
+
+        if(row.affectedRows!=0){
+            response = [{"sesion updated":"true","id affected":idToUpdate}];
+        }else{
+            response = [{"sesion updated":"false","Error":"Algo salió mal"}];
+        }
+        
         res.status(200).json(
             jsonResponse(
                 RESULT_CODE_SUCCESS,

@@ -60,6 +60,45 @@ export const getPlayerById = async(req,res)=>{
     }
 }
 
+export const enableStatusLevelPlayer = async(req,res)=>{
+    try{
+        const playerToUpdate = req.params.idPlayer
+        const level = req.params.idLevel;
+        let query = "";
+        switch (level){
+            case '1' : query = "UPDATE tb_player SET statusLevel1=1 WHERE idPlayer=?"; break;
+            case '2' : query = "UPDATE tb_player SET statusLevel2=1 WHERE idPlayer=?";break;
+            case '3' : query = "UPDATE tb_player SET statusLevel3=1 WHERE idPlayer=?";break;
+            case '4' : query = "UPDATE tb_player SET statusLevel4=1 WHERE idPlayer=?";break;
+            case '5' : query = "UPDATE tb_player SET statusLevel5=1 WHERE idPlayer=?";break;
+        }
+        const [row]=await pool.query(query, playerToUpdate)
+        let response =""
+        if(row.affectedRows!=0){
+            response= [{"level enabled":"true","id player affected":playerToUpdate}];
+        }else{
+            response= [{"level enabled":"false","Error":"Algo salió mal"}];
+        
+        }
+        
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                response,
+                STATUS_CODE_SUCCESS
+            )
+        );
+    }catch(e){
+        return res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );  
+    }
+}
+
 export const postPlayer = async(req, res)=>{
     try{
         const {namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor} = req.body
@@ -70,7 +109,7 @@ export const postPlayer = async(req, res)=>{
             const yaRegistrado='SELECT * FROM tb_player WHERE namePlayer = ?';
             const [result] = await pool.query(yaRegistrado, namePlayer);
             if(isJSONempty(result)){
-                const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor) VALUES (?,?,?,?,?)';
+                const query='INSERT INTO tb_player (namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor, statusLevel1, statusLevel2, statusLevel3, statusLevel4, statusLevel5) VALUES (?,?,?,?,?,1,0,0,0,0)';
                 const [row] = await pool.query(query, [namePlayer, passwordPlayer, agePlayer, idTutorOwner, authTokenTutor]);
                 response = [{"inserted":"true","insertedId":row.insertId}];
             }else{
