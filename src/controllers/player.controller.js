@@ -4,6 +4,8 @@ import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_
 
 /**  Routes for player services */
 
+
+
 export const authPlayer = async (req, res)=>{
     try{
         const query="SELECT * FROM tb_player WHERE namePlayer=? AND passwordPlayer=?";
@@ -38,6 +40,32 @@ export const getPlayerById = async(req,res)=>{
     try{
         const idToFind = req.params.id
         const query='SELECT * FROM tb_player WHERE idPlayer=?';
+        let [result] = await pool.query(query, idToFind);
+        if(isJSONempty(result)){
+            result= [{"Error":"El id solicitado no se encuentra registrado"}];
+        }
+        res.status(200).json(
+            jsonResponse(
+                RESULT_CODE_SUCCESS,
+                result,
+                STATUS_CODE_SUCCESS
+            )
+        );
+    }catch(e){
+        return res.status(500).json(
+            jsonResponse(
+                RESULT_CODE_ERROR,
+                e,
+                STATUS_CODE_ERROR
+            )
+        );
+    }
+}
+
+export const getPlayerByTutorId = async(req,res)=>{
+    try{
+        const idToFind = req.params.id
+        const query='SELECT * FROM tb_player WHERE idTutorOwner=?';
         let [result] = await pool.query(query, idToFind);
         if(isJSONempty(result)){
             result= [{"Error":"El id solicitado no se encuentra registrado"}];
