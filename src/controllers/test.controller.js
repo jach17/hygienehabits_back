@@ -3,6 +3,38 @@ import { pool } from "../db.js";
  * Rutas de prueba de conexion y manipulacion con las bases de datos
  */
 
+export const testCleanPlayerTable = async(req, res)=>{
+    try{
+        const query = 'DELETE FROM tb_player';
+        const [result] = await pool.query(query);
+        res.status(200).json(
+            {
+                "result":"1",
+                "message":
+                {
+                    "response":result
+                },
+                "code":"200"
+            }
+        );
+    }catch(e){
+        return res.status(500).json(
+            {
+                "result":"0",
+                "message":
+                {
+                    "response":[
+                        {
+                            "Error": e,
+                        },
+                    ]
+                },
+                "code":"500"
+            }
+        );
+    }
+}
+
 export const testNoDBRoute =(req, res)=>{
     try{
         res.status(200).json(
