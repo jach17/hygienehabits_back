@@ -1,143 +1,142 @@
 import { pool } from "../db.js";
-import {jsonResponse, isJSONempty, RESULT_CODE_ERROR, STATUS_CODE_ERROR, RESULT_CODE_SUCCESS, STATUS_CODE_SUCCESS} from "./component.js"
+import {
+  jsonResponse,
+  isJSONempty,
+  RESULT_CODE_ERROR,
+  STATUS_CODE_ERROR,
+  RESULT_CODE_SUCCESS,
+  STATUS_CODE_SUCCESS,
+} from "./component.js";
 /** Routes for tutor services */
 
-export const getTutorIdByNameAndPassword = async(req, res)=>{
-    try{
-        const query = "SELECT idTutor FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
-        const {nameTutor, passwordTutor} = req.body;
-        let [result] = await pool.query(query, [nameTutor, passwordTutor]);
-        if(isJSONempty(result)){
-            result= [{"Error":"El id solicitado no se encuentra registrado"}];
-        }
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                result,
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );
+export const updateTutorPassword = async (req, res) => {
+  try {
+    const idToUpdate = req.params.id;
+    const { newPassword } = req.body;
+    let response = [];
+    const query = `UPDATE tb_tutor SET passwordTutor=?  WHERE idTutor=${idToUpdate}`;
+    const [row] = await pool.query(query, newPassword);
+    if (row.affectedRows != 0) {
+      response = [{ "password updated": "true", "id affected": idToUpdate }];
+    } else {
+      response = [{ "password updated": "false", Error: "Algo salió mal" }];
     }
-}
-
-export const authTutor = async(req,res)=>{
-    try{
-        const query = "SELECT * FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
-        const {nameTutor, passwordTutor} = req.body;
-        const [dbResponse] = await pool.query(query, [nameTutor, passwordTutor]);
-        const isRegistred = !isJSONempty(dbResponse);
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                [
-                    {
-                        "isRegistred":isRegistred
-                    }
-                ],
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );
-    }
-    
-}
-
-export const getTutorById = async(req, res)=>{
-    try{
-        const idToFind = req.params.id
-        const query='SELECT * FROM tb_tutor WHERE idTutor=?';
-        let [result] = await pool.query(query, idToFind);
-        if(isJSONempty(result)){
-            result= [{"Error":"El id solicitado no se encuentra registrado"}];
-        }
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                result,
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        return res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );
-    }
-}
-
-export const getTutors = async(req, res)=>{
-    try{
-        const query = 'SELECT * FROM tb_tutor';
-        let [result] = await pool.query(query);
-        if(isJSONempty(result)){
-            result=[{"Error":"No hay tutores registrados"}];
-        }
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                result,
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        return res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );
-    }
+    res.status(200).json(
+      jsonResponse(
+        RESULT_CODE_SUCCESS,
+        [
+          {
+            response,
+          },
+        ],
+        STATUS_CODE_SUCCESS
+      )
+    );
+  } catch (e) {
+    res.status(500).json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
 };
 
-export const postTutor = async(req, res)=>{
-    try{
-        const {nameTutor,passwordTutor,ageTutor,authTokenTutor} = req.body
-        const isTutorRegistred = "SELECT * FROM tb_tutor WHERE nameTutor=?";
-        let [result] = await pool.query(isTutorRegistred, nameTutor);
-        let response =[];
-        if(isJSONempty(result)){
-            const query='INSERT INTO tb_tutor (nameTutor,passwordTutor,ageTutor,authTokenTutor) VALUES (?,?,?,?)';
-            const [row] = await pool.query(query, [nameTutor,passwordTutor,ageTutor,authTokenTutor]);
-            response = [{"insertedId":row.insertId}];
-            
-        }else{
-            response = [{"Error":"Ese nombre ya se encuentra registrado"}];
-            
-        }
-        res.status(200).json(
-            jsonResponse(
-                RESULT_CODE_SUCCESS,
-                response,
-                STATUS_CODE_SUCCESS
-            )
-        );
-    }catch(e){
-        return res.status(500).json(
-            jsonResponse(
-                RESULT_CODE_ERROR,
-                e,
-                STATUS_CODE_ERROR
-            )
-        );  
+export const getTutorIdByNameAndPassword = async (req, res) => {
+  try {
+    const query =
+      "SELECT idTutor FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
+    const { nameTutor, passwordTutor } = req.body;
+    let [result] = await pool.query(query, [nameTutor, passwordTutor]);
+    if (isJSONempty(result)) {
+      result = [{ Error: "El id solicitado no se encuentra registrado" }];
     }
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, result, STATUS_CODE_SUCCESS));
+  } catch (e) {
+    res.status(500).json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
 
-}
+export const authTutor = async (req, res) => {
+  try {
+    const query =
+      "SELECT * FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
+    const { nameTutor, passwordTutor } = req.body;
+    const [dbResponse] = await pool.query(query, [nameTutor, passwordTutor]);
+    const isRegistred = !isJSONempty(dbResponse);
+    res.status(200).json(
+      jsonResponse(
+        RESULT_CODE_SUCCESS,
+        [
+          {
+            isRegistred: isRegistred,
+          },
+        ],
+        STATUS_CODE_SUCCESS
+      )
+    );
+  } catch (e) {
+    res.status(500).json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
+
+export const getTutorById = async (req, res) => {
+  try {
+    const idToFind = req.params.id;
+    const query = "SELECT * FROM tb_tutor WHERE idTutor=?";
+    let [result] = await pool.query(query, idToFind);
+    if (isJSONempty(result)) {
+      result = [{ Error: "El id solicitado no se encuentra registrado" }];
+    }
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, result, STATUS_CODE_SUCCESS));
+  } catch (e) {
+    return res
+      .status(500)
+      .json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
+
+export const getTutors = async (req, res) => {
+  try {
+    const query = "SELECT * FROM tb_tutor";
+    let [result] = await pool.query(query);
+    if (isJSONempty(result)) {
+      result = [{ Error: "No hay tutores registrados" }];
+    }
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, result, STATUS_CODE_SUCCESS));
+  } catch (e) {
+    return res
+      .status(500)
+      .json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
+
+export const postTutor = async (req, res) => {
+  try {
+    const { nameTutor, passwordTutor, ageTutor, authTokenTutor } = req.body;
+    const isTutorRegistred = "SELECT * FROM tb_tutor WHERE nameTutor=?";
+    let [result] = await pool.query(isTutorRegistred, nameTutor);
+    let response = [];
+    if (isJSONempty(result)) {
+      const query =
+        "INSERT INTO tb_tutor (nameTutor,passwordTutor,ageTutor,authTokenTutor) VALUES (?,?,?,?)";
+      const [row] = await pool.query(query, [
+        nameTutor,
+        passwordTutor,
+        ageTutor,
+        authTokenTutor,
+      ]);
+      response = [{ insertedId: row.insertId }];
+    } else {
+      response = [{ Error: "Ese nombre ya se encuentra registrado" }];
+    }
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, response, STATUS_CODE_SUCCESS));
+  } catch (e) {
+    return res
+      .status(500)
+      .json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
