@@ -66,6 +66,38 @@ export const getReportsByPlayerId = async (req, res) => {
   }
 };
 
+export const addTutorFeedback = async (req, res) => {
+  try {
+    //UPDATE tb_report SET tutorFeedback=Comentario
+
+    const idToUpdate = req.params.id;
+    const { tutorComment } = req.body;
+    let response = [];
+    const query = `UPDATE tb_report SET tutorFeedback=?  WHERE idReport=${idToUpdate}`;
+    const [row] = await pool.query(query, tutorComment);
+    if (row.affectedRows != 0) {
+      response = [{ "feedback recived": "true", "id affected": idToUpdate }];
+    } else {
+      response = [{ "feedback recived": "false", Error: "Algo salió mal" }];
+    }
+    res.status(200).json(
+      jsonResponse(
+        RESULT_CODE_SUCCESS,
+        [
+          {
+            response,
+          },
+        ],
+        STATUS_CODE_SUCCESS
+      )
+    );
+  } catch (e) {
+    return res
+      .status(500)
+      .json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
+
 export const postReport = async (req, res) => {
   try {
     const {
