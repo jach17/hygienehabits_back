@@ -80,13 +80,14 @@ export const postReport = async (req, res) => {
     const [result] = await pool.query(yaRegistrado, idSesionOwner);
     if (!isJSONempty(result)) {
       const query =
-        "INSERT INTO tb_report (dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed) VALUES (?,?,?,?,?)";
+        "INSERT INTO tb_report (dateStartLevel, dateEndLevel, idSesionOwner, currentScoreLevel, idLevelPlayed, tutorFeedback) VALUES (?,?,?,?,?,?)";
       const [row] = await pool.query(query, [
         dateStartLevel,
         dateEndLevel,
         idSesionOwner,
         currentScoreLevel,
         idLevelPlayed,
+        "Comentario",
       ]);
       response = [{ "report created": "true", insertedId: row.insertId }];
     } else {
