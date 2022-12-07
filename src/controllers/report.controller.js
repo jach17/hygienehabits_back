@@ -74,14 +74,14 @@ export const addTutorFeedback = async (req, res) => {
     const { tutorComment } = req.body;
     let response = [];
     const query = `UPDATE tb_report SET tutorFeedback=?  WHERE idReport=${idToUpdate}`;
-    const [row] = await pool.query(query, tutorComment);
+    const [row] = await pool.query(query, [tutorComment]);
     if (row.affectedRows != 0) {
       response = [{ "feedback recived": "true", "id affected": idToUpdate }];
     } else {
       response = [
         {
           "feedback recived": "false",
-          Error: "Algo salió mal: " + row.affectedRows,
+          Error: row.affectedRows,
         },
       ];
     }
