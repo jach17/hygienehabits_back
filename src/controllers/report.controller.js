@@ -79,7 +79,10 @@ export const addTutorFeedback = async (req, res) => {
       response = [{ "feedback recived": "true", "id affected": idToUpdate }];
     } else {
       response = [
-        { "feedback recived": "false", Error: "Algo salió mal: " + row },
+        {
+          "feedback recived": "false",
+          Error: "Algo salió mal: " + row.affectedRows,
+        },
       ];
     }
     res.status(200).json(
