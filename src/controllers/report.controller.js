@@ -71,17 +71,17 @@ export const addTutorFeedback = async (req, res) => {
     //UPDATE tb_report SET tutorFeedback=Comentario
 
     const idToUpdate = req.params.id;
-    const { tutorComment } = req.body;
+    const { tutorFeedback } = req.body;
     let response = [];
     const query = `UPDATE tb_report SET tutorFeedback=?  WHERE idReport=${idToUpdate}`;
-    const [row] = await pool.query(query, [tutorComment]);
+    const [row] = await pool.query(query, [tutorFeedback]);
     if (row.affectedRows != 0) {
       response = [{ "feedback recived": "true", "id affected": idToUpdate }];
     } else {
       response = [
         {
           "feedback recived": "false",
-          Error: row.affectedRows,
+          Error: row.info,
         },
       ];
     }
