@@ -81,21 +81,13 @@ export const addTutorFeedback = async (req, res) => {
     } else {
       response = [
         {
-          insertedId: 0,
+          insertedId: error,
         },
       ];
     }
-    res.status(200).json(
-      jsonResponse(
-        RESULT_CODE_SUCCESS,
-        [
-          {
-            response,
-          },
-        ],
-        STATUS_CODE_SUCCESS
-      )
-    );
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, response, STATUS_CODE_SUCCESS));
   } catch (e) {
     return res
       .status(500)
