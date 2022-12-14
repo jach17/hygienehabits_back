@@ -40,7 +40,7 @@ export const updateTutorPassword = async (req, res) => {
 export const getTutorIdByNameAndPassword = async (req, res) => {
   try {
     const query =
-      "SELECT idTutor FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
+      "SELECT idTutor, authTokenTutor FROM tb_tutor WHERE nameTutor = ? AND passwordTutor = ?";
     const { nameTutor, passwordTutor } = req.body;
     let [result] = await pool.query(query, [nameTutor, passwordTutor]);
     if (isJSONempty(result)) {
