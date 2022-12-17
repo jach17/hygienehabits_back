@@ -67,6 +67,27 @@ export const getReportsByPlayerId = async (req, res) => {
   }
 };
 
+export const getSessionsWithReportsByPlayerId = async (req, res) => {
+  try {
+    const idPlayerOwner = req.params.id;
+    //const superquery = 'SELECT * FROM tb_player JOIN (SELECT * FROM tb_sesion JOIN tb_report WHERE tb_report.idSesionOwner=tb_sesion.idSesion) as RES WHERE tb_player.idPlayer=RES.idPlayerOwner and tb_player.idPlayer=?'
+    const superquery =
+      "SELECT idSesion, dateStart, idReport, dateStartLevel, dateEndLevel, currentScoreLevel, maxScore, descriptionTitle FROM tb_sesion JOIN (SELECT * FROM tb_report JOIN tb_level on tb_report.idLevelPlayed=tb_level.idLevel) as REPORTS on tb_sesion.idSesion=REPORTS.idSesionOwner AND idPlayerOwner=?;";
+    //const query = 'SELECT * FROM tb_report WHERE ';
+    let [result] = await pool.query(superquery, idPlayerOwner);
+    if (isJSONempty(result)) {
+      result = [{ Error: "No hay sesiones registradas para este usuario" }];
+    }
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, result, STATUS_CODE_SUCCESS));
+  } catch (e) {
+    return res
+      .status(500)
+      .json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
+
 export const addTutorFeedback = async (req, res) => {
   try {
     //UPDATE tb_report SET tutorFeedback=Comentario
