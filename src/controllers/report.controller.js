@@ -72,7 +72,7 @@ export const getSessionsWithReportsByPlayerId = async (req, res) => {
     const idPlayerOwner = req.params.id;
     //const superquery = 'SELECT * FROM tb_player JOIN (SELECT * FROM tb_sesion JOIN tb_report WHERE tb_report.idSesionOwner=tb_sesion.idSesion) as RES WHERE tb_player.idPlayer=RES.idPlayerOwner and tb_player.idPlayer=?'
     const superquery =
-      "SELECT idSesion, dateStart, idReport, dateStartLevel, dateEndLevel, currentScoreLevel, maxScore, descriptionTitle FROM tb_sesion JOIN (SELECT * FROM tb_report JOIN tb_level on tb_report.idLevelPlayed=tb_level.idLevel) as REPORTS on tb_sesion.idSesion=REPORTS.idSesionOwner AND idPlayerOwner=?;";
+      "SELECT idSesion, dateStart, idReport, dateStartLevel, dateEndLevel, currentScoreLevel, maxScore, descriptionTitle FROM tb_sesion JOIN (SELECT * FROM tb_report JOIN tb_level on tb_report.idLevelPlayed=tb_level.idLevel) as REPORTS on tb_sesion.idSesion=REPORTS.idSesionOwner AND tb_sesion.idPlayerOwner=?;";
     //const query = 'SELECT * FROM tb_report WHERE ';
     let [result] = await pool.query(superquery, idPlayerOwner);
     if (isJSONempty(result)) {
