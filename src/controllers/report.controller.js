@@ -46,6 +46,42 @@ export const getFullReportByPlayer = async (req, res) => {
   }
 };
 
+export const getFullReportBySessionId = async (req, res) => {
+  try {
+    //DATA TO RETURN
+    /***
+     * PlayerId
+     * ReportId
+     * DescriptionTitle
+     * CurrentScoreLevel
+     * MaxScoreLevel
+     *  -- CalculateProgress
+     * DateStartLevel
+     * DateEndLevel
+     *  -- Calculate Playing time
+     * DateStartSession
+     * TutorComment
+     *
+     *
+     */
+
+    const idSessionOwner = req.params.id;
+    const superquery =
+      "SELECT idReport, descriptionTitle, dateStartLevel, dateEndLevel, currentScoreLevel, maxScore, dateStart, tutorFeedback FROM tb_sesion JOIN (SELECT * FROM tb_report JOIN tb_level ON tb_report.idLevelPlayed=tb_level.idLevel) as tb_report on tb_sesion.idSesion=tb_report.idSesionOwner AND tb_sesion.idSesion=?;";
+    let [result] = await pool.query(superquery, idSessionOwner);
+    if (isJSONempty(result)) {
+      result = [{ Error: "No hay reportes registrados para esta sesion" }];
+    }
+    res
+      .status(200)
+      .json(jsonResponse(RESULT_CODE_SUCCESS, result, STATUS_CODE_SUCCESS));
+  } catch (e) {
+    return res
+      .status(500)
+      .json(jsonResponse(RESULT_CODE_ERROR, e, STATUS_CODE_ERROR));
+  }
+};
+
 export const getReportsByPlayerId = async (req, res) => {
   try {
     const idPlayerOwner = req.params.id;
